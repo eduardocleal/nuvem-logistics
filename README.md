@@ -1,64 +1,29 @@
 # nuvem-logistics
 
-# Project Title
-
-Simple overview of use/purpose.
-
 ## Description
 
-An in-depth paragraph about your project and overview of use.
+These are the relevant files for CloudWalk's Logistics Operations Analyst Test for candidate Eduardo Leal.
 
-## Getting Started
+## Files
 
-### Dependencies
+### logistics_report
 
-* Describe any prerequisites, libraries, OS version, etc., needed before installing program.
-* ex. Windows 10
+* Final version of answers and project compiled in an R Notebook. Available as R Markdown (.Rmd file) and as pdf.
 
-### Installing
+### df.csv
 
-* How/where to download your program
-* Any modifications needed to be made to files/folders
+* Comma-separated values files after analysis
+* Output from `logistics_report.Rmd`
 
-### Executing program
+### logistics.R
 
-* How to run the program
-* Step-by-step bullets
-```
-code blocks for commands
-```
+* R script with data wrangling process
+* Source code for `logistics_report.Rmd`
 
-## Help
+### logistics-case-v3.txt
 
-Any advise for common problems or issues.
-```
-command to run if program contains helper info
-```
+* Unedited comma-separated values file provided by CloudWalk for data analysis
 
 ## Authors
 
-Contributors names and contact info
-
-ex. Dominique Pizzie  
-ex. [@DomPizzie](https://twitter.com/dompizzie)
-
-## Version History
-
-* 0.2
-    * Various bug fixes and optimizations
-    * See [commit change]() or See [release history]()
-* 0.1
-    * Initial Release
-
-## License
-
-This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
-
-## Acknowledgments
-
-Inspiration, code snippets, etc.
-* [awesome-readme](https://github.com/matiassingers/awesome-readme)
-* [PurpleBooth](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
-* [dbader](https://github.com/dbader/readme-template)
-* [zenorocha](https://gist.github.com/zenorocha/4526327)
-* [fvcproductions](https://gist.github.com/fvcproductions/1bfc2d4aecb01a834b46)
+This analysis was developed solely by Eduardo Leal(mailto:eduardo.leal@aya.yale.edu).
