@@ -1,0 +1,83 @@
+---
+title: "CloudWalk: Logistics Operations Analyst Test"
+date: "20 March 2022"
+author: "Eduardo Custodio Leal"
+output: pdf_document
+---
+
+# 3.1 Understand the industry
+
+> 1. Explain the money flow and the information flow in the acquirer market and the role of the main players.
+
+After the customer swipes the card, the merchant sends the transaction information to the acquirer through the payment gateway. After it receives the payment request, the acquirer passes it on to the credit card network (e.g. Visa, Mastercard), which in turn contacts the issuer. The issuer then performs a series of checks, including a risk analysis and an anti-fraud protocol, ensuring that the customer has enough funds to complete the transaction and checking for any temporary holds that should be released soon. Once the issuer approves the request, the customer’s account is debited and the transaction is settled between the issuer and the acquirer, minus a fee. Finally, the acquirer pays the merchant minus a merchant discount fee.
+
+> 2. Explain the difference between acquirer, sub-acquirer and payment gateway and how the flow explained in question 1 changes for these players.
+
+A **payment gateway** is a system used to transmit information between players at different stages of a payment transaction. The gateway is already necessary in the earliest stages of the transaction flow because it sends information from the merchant’s point of sales (POS) to the acquirer. The gateway therefore supports every communication between different players throughout the transaction authorization process. 
+
+An **acquirer** holds a merchant’s account information and processes payments on their behalf. Once it receives a transaction request through a gateway, it forwards it to the issuer for approval. The acquirer can be understood as intermediary between creditors and merchants. 
+
+A **sub-acquirer** is a company that processes payment information and transmits it to other players involved in the transaction flow. Sub-acquirers can be understood as an intermediary between the merchant and the acquirer, adding an additional anti-fraud step and decreasing transaction risk. A few examples are PayPal and PagSeguro.
+
+> 3. Talk about how the supply chain fits into the ecosystem of means of payments.
+
+Another important role of the acquirer is ensuring the merchant has the required facilities to process transactions, including POS hardware (i.e., in this case, credit card machines). Without the necessary equipment, the merchant can’t access the gateway and therefore is not able to handle any transactions. In this context, supply chain is a very relevant factor in the acquirer market, because it affects an essential prerequisite for payment transactions. Accordingly, supply chain challenges can delay and even prevent the establishment of a functional ecosystem of means of payments if merchants are not able to properly access and setup POS hardware.
+
+> 4. Based on the above points, please explain, how the agile delivery of the card machine would benefit everyone involved.
+
+The agile delivery of credit card machines is therefore critical to the acquirer market. It guarantees not only that the merchant can quickly setup their POS hardware for payment transactions, it also facilitates maintenance and replacement for malfunctioning equipment. Accepting credit card payments is a key factor for almost any D2C business to succeed in Brazil. With the significant increase in the population that has access to credit cards, it is imperative for business to accept credit card payments in order to secure a solid customer base. This factor becomes all the more important for SMBs, which are less likely to have alternative payment options and rely more heavily on monthly income. To maximize its social impact as a fintech startup, CloudWalk should seek to optimize the efficiency of credit card machines delivery.
+
+# 3.2 Get your hands dirty
+
+> Using [this csv](https://github.com/fabiomdlima/Logistics/blob/main/logistics-case-v3.csv) with hypothetical delivery data, imagine that you are analyzing the performance of our logistics operator in the deliveries of our products. Analyze the data provided and present your conclusions. In addition to the data in the spreadsheet, do a query in SQL and graph it and try to explain the anomalous behavior you found.
+
+```{r include=FALSE}
+source('logistics.R')
+library(gt)
+```
+
+The dataset includes information about orders delivered between 31 December 2021 and 31 January 2022. Over the given period, CloudWalk was able to 
+deliver `r sum(!is.na(df_backup$Delivered.At))` orders in `r length(unique(df$destination_city))` towns across all 26 states and Distrito Federal (DF). São Paulo (SP) was the state with the most orders--a total of `r sum(df$destination_uf == 'SP')` orders, followed by Minas Gerais (MG) and Bahia (BA), with `r sum(df$destination_uf == 'MG')` and `r sum(df$destination_uf == 'BA')` orders respectively. Acre (AC), Amapá (AP), and Roraima (RR) saw the lowest numbers, with `r sum(df$destination_uf == 'AC')`, `r sum(df$destination_uf == 'AP')`, and `r sum(df$destination_uf == 'RR')` orders respectively.
+
+The associated orders for these deliveries were placed between 26 September 2021 and 27 January 2022. The mean total delivery time was `r as.double(round(mean(df$total_time, na.rm = TRUE), 2))` days, with a median of `r as.double(round(median(df$total_time, na.rm = TRUE), 2))` days and a standard deviation of `r as.double(round(sd(df$total_time, na.rm = TRUE), 2))` days.
+
+Delivery consists of 3 main stages: shipping, transit to local carrier, and final delivery. In the shipping stage, CloudWalk processes the order, packs the purchased goods and sends them to a carrier. The carrier then transports the package to a local branch, which is then responsible for bringing the purchase to its final destination. Transit to local is generally the longest step, with an average duration of `r as.double(round(mean(df$transit_time, na.rm = TRUE), 2))` days, compared to `r as.double(round(mean(df$shipping_time, na.rm = TRUE), 2))` days for
+shipping and `r as.double(round(mean(df$delivery_time, na.rm = TRUE), 2))` for local delivery.
+
+```{r echo=FALSE, out.width='75%', fig.align='center'}
+times_mat <- t(as.matrix(times_by_uf[,c('shipping_time', 'transit_time',
+                                        'delivery_time')]))
+colnames(times_mat) <- times_by_uf$destination_uf
+
+barplot(times_mat[,order(times_by_uf$total_time, decreasing = TRUE)],
+        beside = FALSE, xlab = 'UF', ylab = 'Time (days)', cex.names = .9,
+        las = 2, main = 'Delivery time by federative unit (UF)',
+        axis.lty = 1, ylim = c(-1, 40),
+        col = c('skyblue4', 'skyblue3', 'skyblue2'))
+legend('topright', c('Local delivery', 'Transit to local', 'Shipping'),
+       fill = c('skyblue2', 'skyblue3', 'skyblue4'))
+```
+
+CloudWalk estimates a delivery time of around `r as.integer(round(mean(difftime(df$delivery_estimate, as.Date(df$created),units = 'days'), na.rm = TRUE)))` days, but roughly `r paste0(round(100 * mean(df$delay, na.rm = TRUE)), '%')` of orders faced some sort of delivery delay. KPIs showed significant variation across different states--whereas `r paste0(round(100 * mean(df$delay[df$destination_uf == 'AC'], na.rm = TRUE)), '%')` of orders in AC were delayed, no more than `r paste0(round(100 * mean(df$delay[df$destination_uf == 'AM'], na.rm = TRUE)), '%')` of orders to Amazonas (AM) arrived after the estimated delivery date.
+
+```{r echo=FALSE}
+uf_delay <- delay_by_uf
+uf_delay$delay <- paste0(round(100 * uf_delay$delay, 2),'%')
+uf_delay$total_time <- round(uf_delay$total_time, 2)
+names(uf_delay) <- c('UF', 'Delivery (days)', 'Delay rate')
+uf_delay[order(delay_by_uf$delay, decreasing = TRUE),] %>% gt()
+
+uf_times <- times_by_uf
+names(uf_times) <- c('UF', 'Shipping (days)', 'Transit (days)',
+                     'Local delivery (days)', 'Total time (days)',
+                     'Delay (days)')
+uf_times[,-1] <- round(uf_times[,-1], 2)
+uf_times %>% gt()
+```
+
+# 3.3 Solve the problem
+ > *Action plan - what would you do?*
+ > We make deliveries from a nationally structured logistics partner with distribution centers and delivery partners strategically spread to serve all zip code ranges in the country. Based on the data already analyzed, what would you do to reduce the average delivery time to 3 days?
+ 
+Analysis of delivery timeframes revealed that transit to local delivery is generally the longest step in the delivery process and is often the main factor that leads to delays. In order to reduce average delivery time to 3 days, CloudWalk needs to find alternatives that will speed up distribution, such as establishing more partnerships with logistics players or growing a *de novo* logistics branch. Increasing the number of distribution centers and stocking them with more inventory can also lead to faster deliveries, especially in those areas that face the most delays.
+
