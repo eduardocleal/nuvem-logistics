@@ -39,7 +39,7 @@ df$delay_time <- (df$delay) * difftime(df$delivery, df$delivery_estimate,
 turnaround <- c('shipping_time', 'transit_time', 'delivery_time', 'total_time')
 
 # for (var in turnaround){
-#   plot(density(na.omit(as.double(df[,var]))),
+#   plot(density(na.omit(as.double(df[,var]))), xlab = 'Time (days)',
 #        main = paste0(var, ', max = ',
 #                      round(max(df[,var], na.rm = TRUE), 2), ' days'))
 # }
