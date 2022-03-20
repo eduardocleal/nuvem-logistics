@@ -26,4 +26,4 @@ These are the relevant files for CloudWalk's Logistics Operations Analyst Test f
 
 ## Authors
 
-This analysis was developed solely by Eduardo Leal(mailto:eduardo.leal@aya.yale.edu).
+This analysis was developed solely by [Eduardo Leal](mailto:eduardo.leal@aya.yale.edu).
